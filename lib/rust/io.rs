@@ -1,6 +1,4 @@
-use std::{
-    fmt::Write,
-};
+use std::fmt::Write;
 
 struct IO4PS {
     in_str: String,
@@ -61,5 +59,29 @@ impl TokenizedInput<'_> {
 
     fn next_raw(&mut self) -> &str {
         self.buffer.next().unwrap()
+    }
+}
+
+struct Joiner<'a, 'b, T: std::fmt::Display> {
+    sep: &'a str,
+    list: &'b [T],
+}
+
+impl<'a, 'b, T: std::fmt::Display> Joiner<'a, 'b, T> {
+    pub fn new(sep: &'a str, list: &'b [T]) -> Joiner<'a, 'b, T> {
+        Joiner { sep, list }
+    }
+}
+
+impl<'a, 'b, T: std::fmt::Display> std::fmt::Display for Joiner<'a, 'b, T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let mut iter = self.list.iter();
+        if let Some(first) = iter.next() {
+            write!(f, "{}", first)?;
+            for item in iter {
+                write!(f, "{}{}", self.sep, item)?;
+            }
+        }
+        Ok(())
     }
 }
